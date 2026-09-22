@@ -1,0 +1,33 @@
+{
+  "name": "wrath",
+  "version": "0.25.0",
+  "description": "A Minecraft 1.8.9 proxy with a cosmetic-only plugin API",
+  "main": "src/index.js",
+  "bin": {
+    "wrath": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js start",
+    "login": "node src/index.js login",
+    "test": "node test/smoke.js",
+    "test:listen": "node test/listen.js",
+    "icon": "node scripts/make-icon.js",
+    "shortcut": "powershell -ExecutionPolicy Bypass -File scripts/install-shortcut.ps1",
+    "shortcut:remove": "powershell -ExecutionPolicy Bypass -File scripts/install-shortcut.ps1 -Remove",
+    "window": "node src/index.js window",
+    "app": "electron src/ui/electron.js"
+  },
+  "keywords": [
+    "minecraft",
+    "proxy",
+    "protocol",
+    "plugins"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^14.0.0",
+    "electron": "^44.4.5",
+    "minecraft-protocol": "^1.57.0",
+    "prismarine-auth": "^2.7.0"
+  }
+}
