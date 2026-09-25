@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wrath</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="bar">
+    <div class="brand">
+        <span class="sigil">W</span>
+        <span class="wordmark">WRATH</span>
+        <span class="version" id="version"></span>
+    </div>
+
+    <div class="state" id="state-pill">
+        <span class="dot"></span>
+        <span class="label">starting</span>
+    </div>
+
+    <div class="bar-actions">
+        <button class="ghost" id="btn-scan" title="Scan the lobby you are in">Scan lobby</button>
+        <button class="ghost danger" id="btn-quit" title="Stop Wrath and close">Quit</button>
+    </div>
+</header>
+
+<div class="fault" id="fault" hidden>
+    <span class="fault-mark">!</span>
+    <span id="fault-text"></span>
+    <button class="ghost" id="fault-retry">Try again</button>
+    <button class="ghost" id="fault-settings">Settings</button>
+</div>
+
+<div class="shell">
+    <nav class="rail">
+        <button class="tab is-active" data-view="home"><span class="glyph">◆</span>Overview</button>
+        <button class="tab" data-view="players"><span class="glyph">▤</span>Lobby</button>
+        <button class="tab" data-view="plugins"><span class="glyph">▣</span>Plugins</button>
+        <button class="tab" data-view="settings"><span class="glyph">✦</span>Settings</button>
+        <button class="tab" data-view="log"><span class="glyph">≡</span>Log</button>
+        <div class="rail-foot">
+            <div class="rail-meta" id="rail-account">—</div>
+            <div class="rail-meta dim" id="rail-target">—</div>
+        </div>
+    </nav>
+
+    <main class="stage">
+
+        <!-- Overview ---------------------------------------------------- -->
+        <section class="view is-active" data-view="home">
+            <div class="connect">
+                <div class="connect-label">Add this server in Minecraft 1.8.9</div>
+                <div class="connect-row">
+                    <code id="connect-address">localhost:25565</code>
+                    <button class="copy" id="btn-copy">Copy</button>
+                </div>
+                <div class="connect-note" id="connect-note">Then join it like any other server.</div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title">Account</div>
+                    <div class="card-value" id="card-account">—</div>
+                    <div class="card-note">Signed in through Microsoft</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Forwards to</div>
+                    <div class="card-value" id="card-target">—</div>
+                    <div class="card-note" id="card-session">Nothing connected</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Hypixel key</div>
+                    <div class="card-value" id="card-hypixel">—</div>
+                    <div class="card-note" id="card-rate">Needed for stats</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Urchin key</div>
+                    <div class="card-value" id="card-urchin">—</div>
+                    <div class="card-note">Needed for blacklist tags</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Recent activity</h2>
+                    <span class="panel-note" id="home-mode"></span>
+                </div>
+                <div class="feed" id="home-feed"></div>
+            </div>
+        </section>
+
+        <!-- Lobby ------------------------------------------------------- -->
+        <section class="view" data-view="players">
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Last scan</h2>
+                    <span class="panel-note" id="scan-note">No scan yet</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="roster" id="roster">
+                        <thead><tr id="roster-head"></tr></thead>
+                        <tbody id="roster-body"></tbody>
+                    </table>
+                </div>
+                <div class="legend" id="roster-legend"></div>
+                <div class="empty" id="roster-empty">
+                    Join a game, or press <strong>Scan lobby</strong>, and everyone shows up here.
+                </div>
+            </div>
+        </section>
+
+        <!-- Plugins ----------------------------------------------------- -->
+        <section class="view" data-view="plugins">
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Plugins</h2>
+                    <span class="panel-note">Changes apply straight away</span>
+                </div>
+                <div class="plugins" id="plugins"></div>
+            </div>
+        </section>
+
+        <!-- Settings ---------------------------------------------------- -->
+        <section class="view" data-view="settings">
+            <div class="panel">
+                <div class="panel-head"><h2>Connection</h2></div>
+                <div class="form">
+                    <label>
+                        <span>Server to forward to</span>
+                        <div class="field-row">
+                            <input type="text" id="in-host" spellcheck="false" autocomplete="off">
+                            <input type="number" id="in-port" min="1" max="65535" class="narrow">
+                            <button class="ghost" data-save="target">Save</button>
+                        </div>
+                        <small>Hypixel is mc.hypixel.net. Leave the port at 25565 unless you know it differs.</small>
+                    </label>
+                    <label>
+                        <span>Port Wrath listens on</span>
+                        <div class="field-row">
+                            <input type="number" id="in-proxyport" min="1" max="65535" class="narrow">
+                            <button class="ghost" data-save="proxyPort">Save</button>
+                        </div>
+                        <small>This is the address you add in Minecraft. Changing it needs a restart.</small>
+                    </label>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head"><h2>API keys</h2></div>
+                <div class="form">
+                    <label>
+                        <span>Hypixel</span>
+                        <div class="field-row">
+                            <input type="password" id="in-hypixel" spellcheck="false" autocomplete="off" placeholder="not set">
+                            <button class="ghost" data-save="hypixelKey">Save</button>
+                            <button class="ghost" data-verify="hypixel">Test</button>
+                        </div>
+                        <small id="note-hypixel">From developer.hypixel.net. Without it there are no stats.</small>
+                    </label>
+                    <label>
+                        <span>Urchin</span>
+                        <div class="field-row">
+                            <input type="password" id="in-urchin" spellcheck="false" autocomplete="off" placeholder="not set">
+                            <button class="ghost" data-save="urchinKey">Save</button>
+                            <button class="ghost" data-verify="urchin">Test</button>
+                        </div>
+                        <small id="note-urchin">Optional. Adds blacklist tags to the scan.</small>
+                    </label>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head"><h2>Behaviour</h2></div>
+                <div class="form">
+                    <label>
+                        <span>Log detail</span>
+                        <div class="field-row">
+                            <select id="in-loglevel">
+                                <option value="debug">Everything</option>
+                                <option value="info">Normal</option>
+                                <option value="warn">Warnings only</option>
+                                <option value="error">Errors only</option>
+                            </select>
+                            <button class="ghost" data-save="logLevel">Save</button>
+                        </div>
+                    </label>
+                    <label class="row-toggle">
+                        <span>Reconnect automatically if the server drops you</span>
+                        <input type="checkbox" id="in-reconnect">
+                    </label>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head"><h2>Files</h2></div>
+                <div class="form paths">
+                    <div><span>Folder</span><code id="path-base">—</code></div>
+                    <div><span>Log</span><code id="path-log">—</code></div>
+                    <div class="field-row">
+                        <button class="ghost" id="btn-reload">Reload plugins</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Log --------------------------------------------------------- -->
+        <section class="view" data-view="log">
+            <div class="panel tall">
+                <div class="panel-head">
+                    <h2>Log</h2>
+                    <div class="log-tools">
+                        <input type="search" id="log-filter" placeholder="Filter" spellcheck="false">
+                        <button class="ghost" id="btn-follow" data-on="1">Following</button>
+                        <button class="ghost" id="btn-clear">Clear</button>
+                    </div>
+                </div>
+                <div class="log" id="log"></div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<div class="veil" id="auth-veil" hidden>
+    <div class="auth">
+        <div class="auth-mark">W</div>
+        <h2>Sign in to Microsoft</h2>
+        <p>Open the page below, enter the code, and approve. Wrath finishes on its own.</p>
+        <a class="auth-link" id="auth-url" target="_blank" rel="noreferrer noopener"></a>
+        <div class="auth-code" id="auth-code">—</div>
+        <button class="ghost" id="auth-copy">Copy code</button>
+        <small>This signs in the Minecraft account Wrath connects with. Nothing is stored anywhere but this machine.</small>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
